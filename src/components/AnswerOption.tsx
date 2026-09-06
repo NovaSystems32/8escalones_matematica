@@ -32,6 +32,8 @@ export function AnswerOption({
     );
   }
 
+  const marcada = !revelar && seleccionada;
+
   let estilo = 'panel-vidrio';
   let anillo = '';
   if (revelar) {
@@ -42,8 +44,8 @@ export function AnswerOption({
     } else {
       estilo = 'panel-vidrio opacity-50';
     }
-  } else if (seleccionada) {
-    anillo = 'ring-4 ring-[var(--dorado)] scale-[1.02]';
+  } else if (marcada) {
+    anillo = 'scale-[1.02]';
   } else if (bloqueada) {
     estilo = 'panel-vidrio opacity-50';
   }
@@ -56,17 +58,43 @@ export function AnswerOption({
       disabled={interactiva ? bloqueada || revelar : undefined}
       onClick={interactiva ? () => onSeleccionar?.(indice) : undefined}
       aria-pressed={interactiva ? seleccionada : undefined}
-      className={`tarjeta-respuesta rounded-2xl p-4 sm:p-6 flex items-center gap-3 sm:gap-4 min-h-[88px] text-left w-full ${estilo} ${anillo} ${
+      className={`tarjeta-respuesta relative rounded-2xl p-4 sm:p-6 flex items-center gap-3 sm:gap-4 min-h-[88px] text-left w-full border-4 ${estilo} ${anillo} ${
         interactiva ? 'cursor-pointer' : ''
       } ${revelar && esLaCorrecta ? 'destello-resultado' : ''}`}
+      style={
+        marcada
+          ? {
+              borderColor: 'var(--dorado)',
+              background: 'rgba(255, 201, 74, 0.22)',
+              boxShadow: '0 0 0 2px rgba(255, 201, 74, 0.35), 0 8px 24px rgba(255, 201, 74, 0.3)',
+            }
+          : { borderColor: 'transparent' }
+      }
     >
+      {marcada && (
+        <span
+          className="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center font-black text-lg shadow-lg"
+          style={{ background: 'var(--dorado)', color: '#241a00' }}
+          aria-hidden="true"
+        >
+          ✓
+        </span>
+      )}
       <span
         className="flex-none w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-black text-lg sm:text-xl"
-        style={{ background: 'rgba(255,255,255,0.12)' }}
+        style={{ background: marcada ? 'var(--dorado)' : 'rgba(255,255,255,0.12)', color: marcada ? '#241a00' : undefined }}
       >
         {LETRAS[indice]}
       </span>
       <span className="font-bold text-lg sm:text-2xl leading-snug texto-alto-contraste">{texto}</span>
+      {marcada && (
+        <span
+          className="ml-auto flex-none text-xs sm:text-sm font-black px-3 py-1 rounded-full"
+          style={{ background: 'var(--dorado)', color: '#241a00' }}
+        >
+          ✓ Seleccionada
+        </span>
+      )}
     </Etiqueta>
   );
 }
