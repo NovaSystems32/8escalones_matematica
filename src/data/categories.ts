@@ -14,10 +14,10 @@ export const CATEGORIES: Record<CategoryId, Category> = {
 export const CATEGORY_LIST: Category[] = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => CATEGORIES[n as CategoryId]);
 
 export const PARTICIPANT_COLORS = [
-  '#ff3d9a', // magenta
-  '#ffb020', // dorado/naranja
-  '#22c55e', // verde
-  '#38bdf8', // celeste
+  '#ef4444', // rojo
+  '#eab308', // amarillo
+  '#f97316', // naranja
+  '#3b82f6', // azul
   '#a855f7', // violeta
 ];
 
