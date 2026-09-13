@@ -60,6 +60,7 @@ export function ControlPanel({ incrustado = false }: Props) {
     }
     setAvisoSinPreguntas(null);
     dispatch({ type: 'MOSTRAR_PREGUNTA', pregunta });
+    sonido.inicioReloj();
   }
 
   function manejarConfirmar() {

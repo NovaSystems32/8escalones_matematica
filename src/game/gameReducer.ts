@@ -169,7 +169,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           ...state.temporizador,
           segundosRestantes: state.configuracion.tiempoSegundos,
           segundosTotales: state.configuracion.tiempoSegundos,
-          corriendo: false,
+          corriendo: true,
           terminado: false,
         },
       });
