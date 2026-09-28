@@ -5,9 +5,16 @@ import type { Question } from '../types';
 const banco = preguntas as Question[];
 
 describe('Banco de preguntas inicial', () => {
-  it('tiene exactamente 27 preguntas, todas activas', () => {
-    expect(banco.length).toBe(27);
+  it('tiene exactamente 54 preguntas, todas activas', () => {
+    expect(banco.length).toBe(54);
     expect(banco.every((q) => q.activa)).toBe(true);
+  });
+
+  it('tiene al menos una pregunta activa en cada uno de los 8 escalones', () => {
+    for (let escalon = 1; escalon <= 8; escalon++) {
+      const delEscalon = banco.filter((q) => q.escalon === escalon && q.activa);
+      expect(delEscalon.length).toBeGreaterThan(0);
+    }
   });
 
   it('tiene ids únicos', () => {
