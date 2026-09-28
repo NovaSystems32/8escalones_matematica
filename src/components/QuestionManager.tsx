@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Question } from '../types';
 import { useQuestionBank, validarPregunta } from '../store/QuestionBankContext';
 import { CATEGORY_LIST } from '../data/categories';
@@ -34,6 +34,11 @@ export function QuestionManager({ onCerrar }: Props) {
   const [confirmarEliminarId, setConfirmarEliminarId] = useState<string | null>(null);
   const [confirmarRestaurar, setConfirmarRestaurar] = useState(false);
   const inputArchivo = useRef<HTMLInputElement>(null);
+  const contenidoModal = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contenidoModal.current) contenidoModal.current.scrollTop = 0;
+  }, []);
 
   const preguntasFiltradas = useMemo(
     () => (filtroEscalon === 'todas' ? banco : banco.filter((q) => q.escalon === filtroEscalon)),
@@ -93,8 +98,11 @@ export function QuestionManager({ onCerrar }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="panel-vidrio rounded-2xl p-4 sm:p-6 max-w-5xl w-full my-4">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-start justify-center p-2 sm:p-4">
+      <div
+        ref={contenidoModal}
+        className="panel-vidrio rounded-2xl p-4 sm:p-6 max-w-5xl w-full my-4 max-h-[calc(100vh-2rem)] overflow-y-auto"
+      >
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h2 className="text-2xl font-black titulo-show">Banco de preguntas</h2>
           <button type="button" className="boton-show text-sm" onClick={onCerrar}>
