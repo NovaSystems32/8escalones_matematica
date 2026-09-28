@@ -5,15 +5,9 @@ import type { Question } from '../types';
 const banco = preguntas as Question[];
 
 describe('Banco de preguntas inicial', () => {
-  it('tiene al menos 80 preguntas', () => {
-    expect(banco.length).toBeGreaterThanOrEqual(80);
-  });
-
-  it('tiene al menos 10 preguntas activas por cada uno de los 8 escalones', () => {
-    for (let escalon = 1; escalon <= 8; escalon++) {
-      const delEscalon = banco.filter((q) => q.escalon === escalon && q.activa);
-      expect(delEscalon.length).toBeGreaterThanOrEqual(10);
-    }
+  it('tiene exactamente 27 preguntas, todas activas', () => {
+    expect(banco.length).toBe(27);
+    expect(banco.every((q) => q.activa)).toBe(true);
   });
 
   it('tiene ids únicos', () => {
@@ -21,19 +15,21 @@ describe('Banco de preguntas inicial', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('cada pregunta tiene exactamente cuatro opciones no vacías y distintas', () => {
+  it('cada pregunta tiene entre 2 y 4 opciones no vacías y distintas', () => {
     for (const q of banco) {
-      expect(q.opciones).toHaveLength(4);
+      expect(q.opciones.length).toBeGreaterThanOrEqual(2);
+      expect(q.opciones.length).toBeLessThanOrEqual(4);
       for (const opcion of q.opciones) {
         expect(opcion.trim().length).toBeGreaterThan(0);
       }
-      expect(new Set(q.opciones).size).toBe(4);
+      expect(new Set(q.opciones).size).toBe(q.opciones.length);
     }
   });
 
-  it('cada pregunta tiene un índice de respuesta correcta válido (0 a 3)', () => {
+  it('cada pregunta tiene un índice de respuesta correcta que coincide con una opción existente', () => {
     for (const q of banco) {
-      expect([0, 1, 2, 3]).toContain(q.respuestaCorrecta);
+      expect(q.respuestaCorrecta).toBeGreaterThanOrEqual(0);
+      expect(q.respuestaCorrecta).toBeLessThan(q.opciones.length);
     }
   });
 

@@ -16,7 +16,9 @@ export function crearParticipantes(nombres: string[], colores?: string[]): Parti
   }));
 }
 
-/** Elige una pregunta activa al azar de un escalón, evitando repetir las ya usadas hasta agotarlas. */
+/** Elige una pregunta activa al azar de un escalón, evitando repetir las ya usadas hasta agotarlas.
+ * Si ese escalón no tiene preguntas activas propias, recurre al resto del banco activo para que
+ * el juego nunca se quede sin preguntas para mostrar. */
 export function elegirPregunta(
   banco: Question[],
   escalon: number,
@@ -24,17 +26,18 @@ export function elegirPregunta(
   excluirId?: string
 ): Question | null {
   const activasDelEscalon = banco.filter((q) => q.escalon === escalon && q.activa);
-  if (activasDelEscalon.length === 0) return null;
+  const poolBase = activasDelEscalon.length > 0 ? activasDelEscalon : banco.filter((q) => q.activa);
+  if (poolBase.length === 0) return null;
 
-  let disponibles = activasDelEscalon.filter((q) => !usadas.includes(q.id) && q.id !== excluirId);
+  let disponibles = poolBase.filter((q) => !usadas.includes(q.id) && q.id !== excluirId);
 
   if (disponibles.length === 0) {
-    // Se agotaron: reiniciamos el pool de esa categoría (salvo la que se quiere excluir explícitamente)
-    disponibles = activasDelEscalon.filter((q) => q.id !== excluirId);
+    // Se agotaron: reiniciamos el pool (salvo la que se quiere excluir explícitamente)
+    disponibles = poolBase.filter((q) => q.id !== excluirId);
   }
   if (disponibles.length === 0) {
     // Sólo queda la excluida (banco de 1 pregunta activa): la devolvemos igual
-    disponibles = activasDelEscalon;
+    disponibles = poolBase;
   }
 
   const idx = Math.floor(Math.random() * disponibles.length);
@@ -54,9 +57,12 @@ export function calcularCampeones(participantes: Participante[]): string[] {
 }
 
 export function opcionesIncorrectasParaOcultar(pregunta: Question): number[] {
-  const incorrectas = [0, 1, 2, 3].filter((i) => i !== pregunta.respuestaCorrecta);
+  const totalOpciones = pregunta.opciones.length;
+  const incorrectas = pregunta.opciones.map((_, i) => i).filter((i) => i !== pregunta.respuestaCorrecta);
+  // Deja siempre la correcta más al menos una incorrecta visibles (no tiene sentido "50 y 50" en V/F).
+  const aOcultar = Math.max(0, Math.min(2, totalOpciones - 2));
   const barajadas = [...incorrectas].sort(() => Math.random() - 0.5);
-  return barajadas.slice(0, 2).sort((a, b) => a - b);
+  return barajadas.slice(0, aOcultar).sort((a, b) => a - b);
 }
 
 export function categoriaIdValida(n: number): n is CategoryId {
